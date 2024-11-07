@@ -51,11 +51,11 @@ void simple_clock_face_activate(movement_settings_t *settings, void *context) {
 
     if (watch_tick_animation_is_running()) watch_stop_tick_animation();
 
-#ifdef CLOCK_FACE_24H_ONLY
+/*#ifdef CLOCK_FACE_24H_ONLY
     watch_set_indicator(WATCH_INDICATOR_24H);
 #else
     if (settings->bit.clock_mode_24h) watch_set_indicator(WATCH_INDICATOR_24H);
-#endif
+#endif*/ //deleted the indicator//
 
     // handle chime indicator
     if (state->signal_enabled) watch_set_indicator(WATCH_INDICATOR_BELL);
@@ -93,7 +93,7 @@ bool simple_clock_face_loop(movement_event_t event, movement_settings_t *setting
                 watch_disable_adc();
                 // 2.2 volts will happen when the battery has maybe 5-10% remaining?
                 // we can refine this later.
-                state->battery_low = (voltage < 2200);
+                state->battery_low = (voltage < 2500);
             }
 
             // ...and set the LAP indicator if low.
