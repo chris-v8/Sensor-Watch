@@ -29,7 +29,7 @@
 
 const watch_face_t watch_faces[] = {
     simple_clock_face,
-    sunrise_sunset_face,
+    timer_face,
     moon_phase_face,
     stopwatch_face,
     preferences_face,
@@ -58,7 +58,7 @@ const watch_face_t watch_faces[] = {
 #define MOVEMENT_DEFAULT_RED_COLOR 0x0
 
 /* Set to true for 24h mode or false for 12h mode */
-#define MOVEMENT_DEFAULT_24H_MODE false
+#define MOVEMENT_DEFAULT_24H_MODE true
 
 /* Enable or disable the sound on mode button press */
 #define MOVEMENT_DEFAULT_BUTTON_SOUND true
