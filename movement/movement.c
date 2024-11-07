@@ -288,7 +288,7 @@ bool movement_default_loop_handler(movement_event_t event, movement_settings_t *
 
 void movement_move_to_face(uint8_t watch_face_index) {
     movement_state.watch_face_changed = true;
-    movement_state.next_face_idx = watch_face_index;
+    movement_state.next_face_idx = watch_face_index % MOVEMENT_NUM_FACES;
 }
 
 void movement_move_to_next_face(void) {
