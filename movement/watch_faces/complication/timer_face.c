@@ -277,9 +277,19 @@ bool timer_face_loop(movement_event_t event, movement_settings_t *settings, void
                     state->pausing_seconds = 0;
                     state->paused_left = state->target_ts - state->now_ts;
                     movement_cancel_background_task();
+
+                    watch_buzzer_play_note(BUZZER_NOTE_E7, 45);
+                    watch_buzzer_play_note(BUZZER_NOTE_REST, 30);
+                    watch_buzzer_play_note(BUZZER_NOTE_G6, 45);
+
                     break;
                 case pausing:
                     _start(state, settings, false);
+
+                    watch_buzzer_play_note(BUZZER_NOTE_G6, 45);
+                    watch_buzzer_play_note(BUZZER_NOTE_REST, 30);
+                    watch_buzzer_play_note(BUZZER_NOTE_E7, 45);
+
                     break;
                 case waiting: {
                     uint8_t last_timer = state->current_timer;
