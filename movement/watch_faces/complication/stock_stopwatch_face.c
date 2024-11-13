@@ -182,7 +182,10 @@ static void _draw(movement_settings_t *settings) {
         }
     }
     if (_is_running) {
+
+        settings->bit.tracker += 1;
         settings->bit.alarm_enabled = true;
+        
         // blink the colon every half second
         uint8_t blink_ticks = ((_ticks >> 6) & 1);
         if (blink_ticks != _blink_ticks) {
@@ -261,7 +264,11 @@ bool stock_stopwatch_face_loop(movement_event_t event, movement_settings_t *sett
             break;
         case EVENT_ALARM_BUTTON_DOWN:
             _is_running = !_is_running;
+            settings->bit.tracker -= 1;
+            if (settings->bit.tracker == 0)
+            settings->bit.tracker = 0;  
             settings->bit.alarm_enabled = false;
+            
             if (_is_running) {
                 // start or continue stopwatch
                 movement_request_tick_frequency(16);
