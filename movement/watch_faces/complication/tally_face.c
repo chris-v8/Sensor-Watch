@@ -49,21 +49,42 @@ bool tally_face_loop(movement_event_t event, movement_settings_t *settings, void
         case EVENT_ALARM_BUTTON_UP:
             // increment tally index
             state->tally_idx++;
-            if (state->tally_idx > 999999) { //0-999,999
+            if (state->tally_idx > 9999) { //0-9999
                 //reset tally index and play a reset tune
                 state->tally_idx = 0;
+                if (settings->bit.button_should_sound){
                 watch_buzzer_play_note(BUZZER_NOTE_G6, 30);
                 watch_buzzer_play_note(BUZZER_NOTE_REST, 30);
+                }
             }
             print_tally(state);
-            watch_buzzer_play_note(BUZZER_NOTE_E6, 30);
+            if (settings->bit.button_should_sound) watch_buzzer_play_note(BUZZER_NOTE_E6, 30);
+            break;
+        case EVENT_LIGHT_LONG_PRESS:
+            movement_illuminate_led();
+            break;
+        case EVENT_LIGHT_BUTTON_UP:
+            if (state->tally_idx > 0) {
+                state->tally_idx--;
+        
+                // If the tally index has reached zero, play the sound only once
+            if (state->tally_idx == 0 && settings->bit.button_should_sound) {
+            watch_buzzer_play_note(BUZZER_NOTE_D6, 30); // Sound for reaching zero
+            } else if (settings->bit.button_should_sound) {
+            // Play the usual decrement sound
+            watch_buzzer_play_note(BUZZER_NOTE_E6, 30); 
+                }
+            }
+            print_tally(state);  // Update the display with the current tally
             break;
         case EVENT_ALARM_LONG_PRESS:
             state->tally_idx = 0; // reset tally index
             //play a reset tune
+            if (settings->bit.button_should_sound){
             watch_buzzer_play_note(BUZZER_NOTE_G6, 30);
             watch_buzzer_play_note(BUZZER_NOTE_REST, 30);
             watch_buzzer_play_note(BUZZER_NOTE_E6, 30);
+            }
             print_tally(state);
             break;
         case EVENT_ACTIVATE:
@@ -83,7 +104,7 @@ bool tally_face_loop(movement_event_t event, movement_settings_t *settings, void
 // print tally index at the center of display.
 void print_tally(tally_state_t *state) {
     char buf[14];
-    sprintf(buf, "TA  %06d", (int)(state->tally_idx)); // center of LCD display
+    sprintf(buf, "TA  %04d", (int)(state->tally_idx)); // center of LCD display
     watch_display_string(buf, 0);
 }
 
