@@ -63,8 +63,7 @@ typedef union {
         bool clock_24h_leading_zero : 1;    // indicates whether clock should leading zero to indicate 24 hour mode.
         bool use_imperial_units : 1;        // indicates whether to use metric units (the default) or imperial.
         bool alarm_enabled : 1;             // indicates whether there is at least one alarm enabled.
-        bool tracker : 1;                   // hacking around the race condition.
-        uint8_t reserved : 4;               // room for more preferences if needed.
+        uint8_t reserved : 5;               // room for more preferences if needed.
     } bit;
     uint32_t reg;
 } movement_settings_t;
