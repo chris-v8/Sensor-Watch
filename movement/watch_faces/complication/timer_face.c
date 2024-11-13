@@ -62,6 +62,7 @@ static void _start(timer_state_t *state, movement_settings_t *settings, bool wit
     state->mode = running;
     movement_schedule_background_task_for_face(state->watch_face_index, target_dt);
     watch_set_indicator(WATCH_INDICATOR_BELL);
+    settings->bit.tracker += 1;
     settings->bit.alarm_enabled = true;
     if (with_beep) watch_buzzer_play_sequence((int8_t *)_sound_seq_start, NULL);
 }
@@ -132,6 +133,9 @@ static void _draw(movement_settings_t *settings, timer_state_t *state, uint8_t s
 static void _reset(movement_settings_t *settings, timer_state_t *state) {
     state->mode = waiting;
     movement_cancel_background_task_for_face(state->watch_face_index);
+    settings->bit.tracker -= 1;
+    if (settings->bit.tracker == 0)
+    settings->bit.tracker = 0;  
     settings->bit.alarm_enabled = false;
     watch_clear_indicator(WATCH_INDICATOR_BELL);
 }

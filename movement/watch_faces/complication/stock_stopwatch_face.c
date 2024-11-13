@@ -144,11 +144,12 @@ static void _display_ticks(uint32_t ticks) {
 }
 
 /// @brief Displays the current stopwatch time on the LCD (more optimized than _display_ticks())
-static void _draw() {
+static void _draw(movement_settings_t *settings) {
     if (_lap_ticks == 0) {
         char buf[14];
         uint8_t sec_100 = (_ticks & 0x7F) * 100 / 128;
         if (_is_running) {
+            
             uint32_t seconds = _ticks >> 7;
             if (seconds != _old_seconds) {
                 // seconds have changed
@@ -181,6 +182,10 @@ static void _draw() {
         }
     }
     if (_is_running) {
+
+        settings->bit.tracker += 1;
+        settings->bit.alarm_enabled = true;
+        
         // blink the colon every half second
         uint8_t blink_ticks = ((_ticks >> 6) & 1);
         if (blink_ticks != _blink_ticks) {
@@ -249,7 +254,7 @@ bool stock_stopwatch_face_loop(movement_event_t event, movement_settings_t *sett
             _display_ticks(_lap_ticks ? _lap_ticks : _ticks);
             break;
         case EVENT_TICK:
-            _draw();
+            _draw(settings);
             break;
         case EVENT_LIGHT_LONG_PRESS:
             // kind od hidden feature: long press toggles light on or off
@@ -259,6 +264,11 @@ bool stock_stopwatch_face_loop(movement_event_t event, movement_settings_t *sett
             break;
         case EVENT_ALARM_BUTTON_DOWN:
             _is_running = !_is_running;
+            settings->bit.tracker -= 1;
+            if (settings->bit.tracker == 0)
+            settings->bit.tracker = 0;  
+            settings->bit.alarm_enabled = false;
+            
             if (_is_running) {
                 // start or continue stopwatch
                 movement_request_tick_frequency(16);
@@ -274,7 +284,7 @@ bool stock_stopwatch_face_loop(movement_event_t event, movement_settings_t *sett
                 // cancel the keepalive task
                 movement_cancel_background_task();
             }
-            _draw();
+            _draw(settings);
             _button_beep(settings);
             break;
         case EVENT_LIGHT_BUTTON_DOWN:
@@ -307,7 +317,7 @@ bool stock_stopwatch_face_loop(movement_event_t event, movement_settings_t *sett
             if (!_is_running) movement_move_to_face(0);
             break;
         case EVENT_LOW_ENERGY_UPDATE:
-            _draw();
+            _draw(settings);
             break;
         default:
             movement_default_loop_handler(event, settings);
