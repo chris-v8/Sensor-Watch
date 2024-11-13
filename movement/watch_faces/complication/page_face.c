@@ -69,8 +69,6 @@ bool page_face_loop(movement_event_t event, movement_settings_t *settings, void 
         case EVENT_MODE_BUTTON_UP:
             movement_move_to_face(state->watch_face_index + state->size + 1);
             break;
-        case EVENT_MODE_LONG_PRESS:
-        case EVENT_ALARM_LONG_PRESS:
         case EVENT_ALARM_BUTTON_UP:
             movement_move_to_face(state->watch_face_index + 1);
             break;
