@@ -33,9 +33,10 @@ struct page_t {
 };
 
 struct page_t pages[] = {
-    {7, 1, "       2FA"},
-    {9, 3, "       Set"},
-    {13, 2, "        Fn"},
+    {7, 1, "       Fun"},
+    {9, 1, "       2FA"},
+    {11, 3, "       Set"},
+    {15, 2, "        Fn"},
 };
 
 void page_face_setup(movement_settings_t *settings, uint8_t watch_face_index, void ** context_ptr) {
