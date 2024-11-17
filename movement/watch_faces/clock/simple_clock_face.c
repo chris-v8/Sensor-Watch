@@ -1,4 +1,4 @@
-/*
+ /*
  * MIT License
  *
  * Copyright (c) 2022 Joey Castillo
@@ -41,7 +41,7 @@ void simple_clock_face_setup(movement_settings_t *settings, uint8_t watch_face_i
     if (*context_ptr == NULL) {
         *context_ptr = malloc(sizeof(simple_clock_state_t));
         simple_clock_state_t *state = (simple_clock_state_t *)*context_ptr;
-        state->signal_enabled = false;
+        // may be needed in another commit state->signal_enabled = false;
         state->watch_face_index = watch_face_index;
     }
 }
@@ -63,6 +63,8 @@ void simple_clock_face_activate(movement_settings_t *settings, void *context) {
 
     // show alarm indicator if there is an active alarm
     _update_alarm_indicator(settings->bit.alarm_enabled, state);
+    //this is most likely not needed - delete in another commit after confirming if (state->alarm_enabled != settings->bit.alarm_enabled) _update_alarm_indicator(settings->bit.alarm_enabled, state);
+
 
     watch_set_colon();
 
@@ -74,7 +76,8 @@ bool simple_clock_face_loop(movement_event_t event, movement_settings_t *setting
     simple_clock_state_t *state = (simple_clock_state_t *)context;
     char buf[11];
     uint8_t pos;
-
+/*fix-2*/ _update_alarm_indicator(settings->bit.alarm_enabled, state);
+    if (state->alarm_enabled != settings->bit.alarm_enabled) _update_alarm_indicator(settings->bit.alarm_enabled, state);
     watch_date_time date_time;
     uint32_t previous_date_time;
     switch (event.event_type) {
@@ -142,7 +145,7 @@ bool simple_clock_face_loop(movement_event_t event, movement_settings_t *setting
                 watch_display_string("0", 4);
 
             // handle alarm indicator
-            if (state->alarm_enabled != settings->bit.alarm_enabled) _update_alarm_indicator(settings->bit.alarm_enabled, state);
+           if (state->alarm_enabled != settings->bit.alarm_enabled) _update_alarm_indicator(settings->bit.alarm_enabled, state);
             break;
         case EVENT_ALARM_LONG_PRESS:
             settings->bit.button_should_sound = !settings->bit.button_should_sound;
@@ -150,6 +153,8 @@ bool simple_clock_face_loop(movement_event_t event, movement_settings_t *setting
             else watch_clear_indicator(WATCH_INDICATOR_BELL);
             break;
         case EVENT_BACKGROUND_TASK:
+        /*fix-1*/ _update_alarm_indicator(settings->bit.alarm_enabled, state);
+
             // uncomment this line to snap back to the clock face when the hour signal sounds:
             // movement_move_to_face(state->watch_face_index);
             movement_play_signal();
@@ -169,9 +174,10 @@ void simple_clock_face_resign(movement_settings_t *settings, void *context) {
 bool simple_clock_face_wants_background_task(movement_settings_t *settings, void *context) {
     (void) settings;
     simple_clock_state_t *state = (simple_clock_state_t *)context;
+    _update_alarm_indicator(settings->bit.alarm_enabled, state);
     if (!state->signal_enabled) return false;
 
     watch_date_time date_time = watch_rtc_get_date_time();
-
+    
     return date_time.unit.minute == 0;
 }

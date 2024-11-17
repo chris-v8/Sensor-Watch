@@ -61,7 +61,7 @@ static void _start(timer_state_t *state, movement_settings_t *settings, bool wit
     watch_date_time target_dt = watch_utility_date_time_from_unix_time(state->target_ts, _get_tz_offset(settings));
     state->mode = running;
     movement_schedule_background_task_for_face(state->watch_face_index, target_dt);
-    watch_set_indicator(WATCH_INDICATOR_BELL);
+    watch_set_indicator(WATCH_INDICATOR_SIGNAL);
     settings->bit.alarm_enabled = true;
     if (with_beep) watch_buzzer_play_sequence((int8_t *)_sound_seq_start, NULL);
 }
@@ -76,10 +76,10 @@ static void _draw(movement_settings_t *settings, timer_state_t *state, uint8_t s
         case pausing:
             if (state->pausing_seconds % 2) {
                 settings->bit.alarm_enabled = false;
-                watch_clear_indicator(WATCH_INDICATOR_BELL);
+                watch_clear_indicator(WATCH_INDICATOR_SIGNAL);
             } else {
                 settings->bit.alarm_enabled = true;
-                watch_set_indicator(WATCH_INDICATOR_BELL);
+                watch_set_indicator(WATCH_INDICATOR_SIGNAL);
             }
             if (state->pausing_seconds != 1)
                 // not 1st iteration (or 256th): do not write anything
@@ -133,7 +133,7 @@ static void _reset(movement_settings_t *settings, timer_state_t *state) {
     state->mode = waiting;
     movement_cancel_background_task_for_face(state->watch_face_index);
     settings->bit.alarm_enabled = false;
-    watch_clear_indicator(WATCH_INDICATOR_BELL);
+    watch_clear_indicator(WATCH_INDICATOR_SIGNAL);
 }
 
 static void _set_next_valid_timer(timer_state_t *state) {
@@ -217,7 +217,7 @@ void timer_face_activate(movement_settings_t *settings, void *context) {
     if(state->mode == running) {
         watch_date_time now = watch_rtc_get_date_time();
         state->now_ts = watch_utility_date_time_to_unix_time(now, _get_tz_offset(settings));
-        watch_set_indicator(WATCH_INDICATOR_BELL);
+        watch_set_indicator(WATCH_INDICATOR_SIGNAL);
         settings->bit.alarm_enabled = true;
     } else {
         state->pausing_seconds = 1;
@@ -277,19 +277,20 @@ bool timer_face_loop(movement_event_t event, movement_settings_t *settings, void
                     state->pausing_seconds = 0;
                     state->paused_left = state->target_ts - state->now_ts;
                     movement_cancel_background_task();
-
+                if (settings->bit.button_should_sound){
                     watch_buzzer_play_note(BUZZER_NOTE_E7, 45);
                     watch_buzzer_play_note(BUZZER_NOTE_REST, 30);
                     watch_buzzer_play_note(BUZZER_NOTE_G6, 45);
+                }
 
                     break;
                 case pausing:
                     _start(state, settings, false);
-
+                if (settings->bit.button_should_sound){
                     watch_buzzer_play_note(BUZZER_NOTE_G6, 45);
                     watch_buzzer_play_note(BUZZER_NOTE_REST, 30);
                     watch_buzzer_play_note(BUZZER_NOTE_E7, 45);
-
+                }
                     break;
                 case waiting: {
                     uint8_t last_timer = state->current_timer;
