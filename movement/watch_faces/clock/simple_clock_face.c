@@ -58,7 +58,7 @@ void simple_clock_face_activate(movement_settings_t *settings, void *context) {
 #endif*/ //deleted the indicator//
 
     // handle chime indicator
-    if (state->signal_enabled) watch_set_indicator(WATCH_INDICATOR_BELL);
+    if (settings->bit.button_should_sound) watch_set_indicator(WATCH_INDICATOR_BELL);
     else watch_clear_indicator(WATCH_INDICATOR_BELL);
 
     // show alarm indicator if there is an active alarm
@@ -145,8 +145,8 @@ bool simple_clock_face_loop(movement_event_t event, movement_settings_t *setting
             if (state->alarm_enabled != settings->bit.alarm_enabled) _update_alarm_indicator(settings->bit.alarm_enabled, state);
             break;
         case EVENT_ALARM_LONG_PRESS:
-            state->signal_enabled = !state->signal_enabled;
-            if (state->signal_enabled) watch_set_indicator(WATCH_INDICATOR_BELL);
+            settings->bit.button_should_sound = !settings->bit.button_should_sound;
+            if (settings->bit.button_should_sound) watch_set_indicator(WATCH_INDICATOR_BELL);
             else watch_clear_indicator(WATCH_INDICATOR_BELL);
             break;
         case EVENT_BACKGROUND_TASK:
