@@ -41,7 +41,7 @@ void simple_clock_face_setup(movement_settings_t *settings, uint8_t watch_face_i
     if (*context_ptr == NULL) {
         *context_ptr = malloc(sizeof(simple_clock_state_t));
         simple_clock_state_t *state = (simple_clock_state_t *)*context_ptr;
-        // may be needed in another commit state->signal_enabled = false;
+        state->signal_enabled = false;
         state->watch_face_index = watch_face_index;
     }
 }
@@ -157,7 +157,7 @@ bool simple_clock_face_loop(movement_event_t event, movement_settings_t *setting
 
             // uncomment this line to snap back to the clock face when the hour signal sounds:
             // movement_move_to_face(state->watch_face_index);
-            movement_play_signal();
+            //movement_play_signal(); CURRENTLY NOT PLAYING ANY SIGNALS!
             break;
         default:
             return movement_default_loop_handler(event, settings);
